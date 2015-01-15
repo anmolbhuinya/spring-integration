@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/jee
+		http://www.springframework.org/schema/jee/spring-jee-2.5.xsd">
+
+<context:property-placeholder location="classpath:applicationContext.properties" />
+	<context:component-scan base-package="crm.service" />
+
+
+	<jee:jndi-lookup id="mailSession" jndi-name="mail/Session"
+		resource-ref="true" />
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"
+		p:session-ref="mailSession">
+
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587" />
+		<property name="protocol" value="smtp" />
+
+		<property name="username" value="${smtp.username}" />
+		<property name="password" value="${smtp.password}" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.smtp.debug">true</prop>
+
+			</props>
+		</property>
+	</bean>
+
+</beans>

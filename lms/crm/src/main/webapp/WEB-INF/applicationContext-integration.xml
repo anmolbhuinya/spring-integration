@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/integration"
+	xmlns:mail="http://www.springframework.org/schema/integration/mail"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration/mail
+		http://www.springframework.org/schema/integration/mail/spring-integration-mail-4.1.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/integration
+		http://www.springframework.org/schema/integration/spring-integration-4.1.xsd">
+
+	<!-- Note: This requires Spring Integration 1.0.3 or higher. -->
+	<context:property-placeholder location="classpath:applicationContext.properties" />
+
+
+	<!-- ================================================================== -->
+	<!-- Inbound lead gateway (for CRM lead form) -->
+	<!-- ================================================================== -->
+
+	<!-- We're defining request channels defined on a per-operation basis using 
+		Java 5 annotations instead of here. See LeadGateway.java. -->
+	<gateway id="leadGateway" service-interface="crm.integration.gateways.LeadGateway" />
+
+
+	<!-- ================================================================== -->
+	<!-- Central lead intake -->
+	<!-- ================================================================== -->
+
+	<publish-subscribe-channel id="newLeadChannel" />
+
+
+	<!-- ================================================================== -->
+	<!-- Outbound lead service bean (local CRM for domestic leads) -->
+	<!-- ================================================================== -->
+
+	<service-activator input-channel="newLeadChannel"
+		ref="leadService" method="createLead" />
+
+
+	<!-- ================================================================== -->
+	<!-- Outbound SMTP adapter (for confirmation e-mails) -->
+	<!-- ================================================================== -->
+
+	<transformer input-channel="newLeadChannel" output-channel="confEmailChannel">
+
+		<!-- This isn't working. Probably a bug. -->
+		<!-- http://jira.springframework.org/browse/SPR-5990 -->
+		<!-- <beans:bean id="leadToEmailTransformer" class="crm.integration.transformers.LeadToEmailTransformer" 
+			p:confFrom="${conf.email.from}" p:confSubject="${conf.email.subject}" p:confText="${conf.email.text}" 
+			/> -->
+
+		<!-- Use this instead. -->
+		<beans:bean class="crm.integration.transformers.LeadToEmailTransformer">
+			<beans:property name="confFrom" value="${conf.email.from}" />
+			<beans:property name="confTo" value="${conf.email.to}"/>
+			<beans:property name="confSubject" value="${conf.email.subject}" />
+			<beans:property name="confText" value="${conf.email.text}" />
+		</beans:bean>
+	</transformer>
+
+	<channel id="confEmailChannel" />
+
+	<mail:outbound-channel-adapter channel="confEmailChannel"
+		mail-sender="mailSender" />
+</beans:beans>
