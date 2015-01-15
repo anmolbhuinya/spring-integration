@@ -7,6 +7,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:ws="http://www.springframework.org/schema/integration/ws"
+	xmlns:http="http://www.springframework.org/schema/integration/http"
 	xsi:schemaLocation="http://www.springframework.org/schema/integration/mail
 		http://www.springframework.org/schema/integration/mail/spring-integration-mail-4.1.xsd
 		http://www.springframework.org/schema/beans
@@ -18,7 +19,9 @@
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-2.5.xsd
 		http://www.springframework.org/schema/integration/ws
-		http://www.springframework.org/schema/integration/ws/spring-integration-ws-4.1.xsd">
+		http://www.springframework.org/schema/integration/ws/spring-integration-ws-4.1.xsd
+		http://www.springframework.org/schema/integration/http
+		http://www.springframework.org/schema/integration/http/spring-integration-http-4.1.xsd">
 
 	<!-- Note: This requires Spring Integration 1.0.3 or higher. -->
 	<context:property-placeholder location="classpath:applicationContext.properties" />
@@ -31,6 +34,24 @@
 	<!-- We're defining request channels defined on a per-operation basis using 
 		Java 5 annotations instead of here. See LeadGateway.java. -->
 	<gateway id="leadGateway" service-interface="crm.integration.gateways.LeadGateway" />
+	
+	
+	<!-- ================================================================== -->
+	<!-- Inbound HTTP service adapter (for web-based RFI)                   -->
+	<!-- ================================================================== -->
+	
+	<beans:bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
+	
+	<http:inbound-channel-adapter
+		channel="httpLeadChannel" id="httpLeadChannelId"
+		supported-methods="POST"/>
+	
+	<channel id="httpLeadChannel" />
+	
+	<transformer input-channel="httpLeadChannel" output-channel="newLeadChannel">
+		<!-- Use inner bean instead of ref because no one else uses this bean -->
+		<beans:bean class="crm.integration.transformers.HttpToLeadTransformer" />
+	</transformer>
 
 
 	<!-- ================================================================== -->

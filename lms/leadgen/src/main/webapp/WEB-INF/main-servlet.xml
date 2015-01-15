@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+	
+	<context:property-placeholder location="classpath:applicationContext.properties" />
+	
+	
+	<!-- ================================================================== -->
+	<!-- Services                                                           -->
+	<!-- ================================================================== -->
+	
+	<context:component-scan base-package="leadgen.service" />
+	
+	<!-- We're injecting this into RfiServiceImpl. In Spring 3 we'd use EL. -->
+	<bean id="submitRfiUri" class="java.lang.String">
+		<constructor-arg value="${submit.rfi.uri}" />
+	</bean>
+	
+	
+	<!-- ================================================================== -->
+	<!-- Web                                                                -->
+	<!-- ================================================================== -->
+	
+	<context:component-scan base-package="leadgen.web" />
+	
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+	
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:prefix="/WEB-INF/jsp/"
+		p:suffix=".jsp" />
+		
+</beans>

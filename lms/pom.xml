@@ -9,6 +9,7 @@
 	<modules>
 		<module>crm</module>
 		<module>xcrm</module>
+		<module>leadgen</module>
 	</modules>
 
 	<properties>
