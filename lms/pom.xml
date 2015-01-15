@@ -8,6 +8,7 @@
 
 	<modules>
 		<module>crm</module>
+		<module>xcrm</module>
 	</modules>
 
 	<properties>
