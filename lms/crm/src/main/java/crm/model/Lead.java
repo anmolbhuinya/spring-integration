@@ -4,6 +4,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+
+//Using JAXB2 to support integration with external CRM for international leads
+@XmlRootElement
+@XmlType(propOrder = {
+	"firstName", "lastName",
+	"address1", "address2", "city", "stateOrProvince", "postalCode", "country",
+	"homePhone", "workPhone", "mobilePhone", "email" })
 public class Lead {
 	private static DateFormat dateFormat = new SimpleDateFormat();
 	
@@ -24,6 +35,7 @@ public class Lead {
 	
 	public Lead() { }
 	
+	@XmlElement(name = "givenName")
 	public String getFirstName() {
 		return firstName;
 	}
@@ -32,6 +44,7 @@ public class Lead {
 		this.firstName = firstName;
 	}
 	
+	@XmlTransient
 	public String getMiddleInitial() {
 		return middleInitial;
 	}
@@ -40,6 +53,7 @@ public class Lead {
 		this.middleInitial = middleInitial;
 	}
 
+	@XmlElement(name = "surname")
 	public String getLastName() {
 		return lastName;
 	}
@@ -52,6 +66,7 @@ public class Lead {
 		return firstName + " " + lastName;
 	}
 	
+	@XmlElement
 	public String getAddress1() {
 		return address1;
 	}
@@ -60,6 +75,7 @@ public class Lead {
 		this.address1 = address1;
 	}
 
+	@XmlElement
 	public String getAddress2() {
 		return address2;
 	}
@@ -68,6 +84,7 @@ public class Lead {
 		this.address2 = address2;
 	}
 
+	@XmlElement
 	public String getCity() {
 		return city;
 	}
@@ -76,6 +93,7 @@ public class Lead {
 		this.city = city;
 	}
 
+	@XmlElement
 	public String getStateOrProvince() {
 		return stateOrProvince;
 	}
@@ -84,6 +102,7 @@ public class Lead {
 		this.stateOrProvince = stateOrProvince;
 	}
 
+	@XmlElement
 	public String getPostalCode() {
 		return postalCode;
 	}
@@ -92,6 +111,7 @@ public class Lead {
 		this.postalCode = postalCode;
 	}
 	
+	@XmlElement
 	public String getCountry() {
 		return country;
 	}
@@ -100,6 +120,13 @@ public class Lead {
 		this.country = country;
 	}
 	
+	public boolean isInternational() {
+		boolean unknown = (country == null);
+		boolean domestic = ("US".equals(country));
+		return !(unknown || domestic);
+	}
+	
+	@XmlElement
 	public String getHomePhone() {
 		return homePhone;
 	}
@@ -108,6 +135,7 @@ public class Lead {
 		this.homePhone = homePhone;
 	}
 
+	@XmlElement
 	public String getWorkPhone() {
 		return workPhone;
 	}
@@ -116,6 +144,7 @@ public class Lead {
 		this.workPhone = workPhone;
 	}
 
+	@XmlElement
 	public String getMobilePhone() {
 		return mobilePhone;
 	}
@@ -123,7 +152,8 @@ public class Lead {
 	public void setMobilePhone(String mobilePhone) {
 		this.mobilePhone = mobilePhone;
 	}
-
+	
+	@XmlElement(name="emailAddress")
 	public String getEmail() {
 		return email;
 	}
@@ -132,6 +162,7 @@ public class Lead {
 		this.email = email;
 	}
 
+	@XmlTransient
 	public Date getDateCreated() {
 		return dateCreated;
 	}
