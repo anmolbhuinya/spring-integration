@@ -1,26 +1,3 @@
-Anmols-MacBook-Pro:~ anmol$ ls
-Anmol		Documents	Library		Music		Public
-Desktop		Downloads	Movies		Pictures	git
-Anmols-MacBook-Pro:~ anmol$ cd Downloads
-Anmols-MacBook-Pro:Downloads anmol$ ls
-DS_Store			spring-integration-demo-5
-spring-integration-demo-3	spring-integration-master
-spring-integration-demo-4
-Anmols-MacBook-Pro:Downloads anmol$ cd spring-integration-master/
-Anmols-MacBook-Pro:spring-integration-master anmol$ ls
-README.md		spring-integration
-Anmols-MacBook-Pro:spring-integration-master anmol$ vi README.md 
-
-
-
-
-
-
-
-
-
-
-
 
 # spring-integration
 
@@ -41,7 +18,7 @@ Anmols-MacBook-Pro:spring-integration-master anmol$ vi README.md
 
 
 
-Start URL: http://localhost:8080/spring-integration/main/lead/form.html
+Start URL: http://localhost:8080/crm/main/lead/form.html
 
 Adding Gmail as SMTP server.
 1> Add jars a) mail-1.4.1 and activation-1.1 jar to tomcat/lib directory.
