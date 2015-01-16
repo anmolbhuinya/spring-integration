@@ -24,7 +24,7 @@
 		http://www.springframework.org/schema/integration/http/spring-integration-http-4.1.xsd">
 
 	<!-- Note: This requires Spring Integration 1.0.3 or higher. -->
-	<context:property-placeholder location="classpath:applicationContext.properties" />
+	<context:property-placeholder location="classpath:*.properties" />
 
 
 	<!-- ================================================================== -->
@@ -51,6 +51,36 @@
 	<transformer input-channel="httpLeadChannel" output-channel="newLeadChannel">
 		<!-- Use inner bean instead of ref because no one else uses this bean -->
 		<beans:bean class="crm.integration.transformers.HttpToLeadTransformer" />
+	</transformer>
+	
+	
+	<!-- ================================================================== -->
+	<!-- Inbound IMAP IDLE adapter (for legacy e-mail-based RFI)            -->
+	<!-- ================================================================== -->
+	
+	<!-- Use this if your server supports IMAP IDLE. Requires JavaMail 1.4.1
+	     or higher on the client side. -->
+	<mail:imap-idle-channel-adapter
+		channel="emailLeadChannel"
+		store-uri="${email.store.uri}"
+		should-delete-messages="true" />
+		
+	<!-- Use this if your server doesn't support IMAP IDLE. -->
+	<!--
+	<mail:inbound-channel-adapter
+		channel="emailLeadChannel"
+		store-uri="${email.store.uri}">
+		<poller max-messages-per-poll="3">
+			<interval-trigger interval="30" time-unit="SECONDS" />
+		</poller>
+	</mail:inbound-channel-adapter>
+	-->
+	
+	<channel id="emailLeadChannel" />
+	
+	<transformer input-channel="emailLeadChannel" output-channel="newLeadChannel">
+		<!-- Use inner bean instead of ref because no one else uses this bean -->
+		<beans:bean class="crm.integration.transformers.EmailToLeadTransformer" />
 	</transformer>
 
 

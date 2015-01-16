@@ -3,18 +3,22 @@ package crm.model;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-//Using JAXB2 to support integration with external CRM for international leads
+import org.springframework.util.StringUtils;
+
+// Using JAXB2 to support integration with external CRM for international leads
 @XmlRootElement
 @XmlType(propOrder = {
 	"firstName", "lastName",
 	"address1", "address2", "city", "stateOrProvince", "postalCode", "country",
-	"homePhone", "workPhone", "mobilePhone", "email" })
+	"homePhone", "workPhone", "mobilePhone", "email"
+})
 public class Lead {
 	private static DateFormat dateFormat = new SimpleDateFormat();
 	
@@ -32,6 +36,7 @@ public class Lead {
 	private String mobilePhone;
 	private String email;
 	private Date dateCreated;
+	private List<String> notes;
 	
 	public Lead() { }
 	
@@ -152,8 +157,8 @@ public class Lead {
 	public void setMobilePhone(String mobilePhone) {
 		this.mobilePhone = mobilePhone;
 	}
-	
-	@XmlElement(name="emailAddress")
+
+	@XmlElement(name = "emailAddress")
 	public String getEmail() {
 		return email;
 	}
@@ -169,6 +174,33 @@ public class Lead {
 
 	public void setDateCreated(Date dateCreated) {
 		this.dateCreated = dateCreated;
+	}
+
+	@XmlTransient
+	public List<String> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(List<String> notes) {
+		this.notes = notes;
+	}
+	
+	public void guessNamesFromFullName(String fullName) {
+		if (fullName == null) { return; }
+		String[] tokens = fullName.trim().split("\\s+");
+		int len = tokens.length;
+		if (len == 0) {
+			return;
+		} else if (len == 1) {
+			if (!tokens[0].equals("")) { setFirstName(tokens[0]); }
+		} else {
+			StringBuilder builder = new StringBuilder();
+			for (int i = 0; i < len - 1; i++) {
+				builder.append(tokens[i] + " ");
+			}
+			setFirstName(builder.toString().trim());
+			setLastName(tokens[len - 1]);
+		}
 	}
 	
 	public String toString() {
@@ -186,6 +218,7 @@ public class Lead {
 			", mobilePhone=" + mobilePhone +
 			", email=" + email +
 			", dateCreated=" + dateFormat.format(dateCreated) +
+			", notes=" + StringUtils.collectionToDelimitedString(notes, "\n\n") +
 			"]";
 	}
 }
